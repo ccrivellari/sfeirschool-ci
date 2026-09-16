@@ -22,13 +22,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 12
-          cache: 'npm'
-          cache-dependency-path: server/package-lock.json
+
+      - name: Cache npm global cache (Backend)
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-backend-npm-${{ hashFiles('server/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-npm-
 
       - name: Install dependencies & Test
         run: |
           cd server
-          npm ci || npm install
+          npm install
           npm test --if-present
 
       - name: Extract Short SHA
@@ -68,13 +74,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 10
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
+
+      - name: Cache npm global cache (Frontend)
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-frontend-npm-${{ hashFiles('app/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-npm-
 
       - name: Install dependencies & Build
         run: |
           cd app
-          npm ci || npm install
+          npm install
           npm run build --prod --if-present
 
       - name: Extract Short SHA
