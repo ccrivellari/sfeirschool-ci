@@ -27,13 +27,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-backend-npm-${{ hashFiles('server/package.json') }}
+          key: ${{ runner.os }}-backend-npm-${{ hashFiles('back/package.json') }}
           restore-keys: |
             ${{ runner.os }}-backend-npm-
 
       - name: Install dependencies & Test
         run: |
-          cd server
+          cd back
           npm install
           npm test --if-present
 
@@ -53,7 +53,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./server
+          context: ./back
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/sfeirschool-backend:latest
@@ -79,13 +79,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-frontend-npm-${{ hashFiles('app/package.json') }}
+          key: ${{ runner.os }}-frontend-npm-${{ hashFiles('front/package.json') }}
           restore-keys: |
             ${{ runner.os }}-frontend-npm-
 
       - name: Install dependencies & Build
         run: |
-          cd app
+          cd front
           npm install
           npm run build --prod --if-present
 
@@ -105,7 +105,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./app
+          context: ./front
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/sfeirschool-frontend:latest
